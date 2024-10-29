@@ -46,9 +46,9 @@ public class MessageServer {
                         }
                     });
             System.out.println("MessageServer starting...");
+            System.out.println("MessageServer Listening on port " + port);
             ChannelFuture future = bootstrap.bind(port).sync();
             future.channel().closeFuture().sync();
-            System.out.println("MessageServer Listening on port " + port);
         } finally {
             workerGroup.shutdownGracefully().sync();
             bossGroup.shutdownGracefully().sync();
