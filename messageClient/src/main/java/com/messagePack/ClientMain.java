@@ -1,5 +1,6 @@
 package com.messagePack;
 
+import com.messagePack.model.AccountInfo;
 import com.messagePack.socket.MessageClient;
 
 public class ClientMain {
@@ -13,6 +14,12 @@ public class ClientMain {
 //        } catch (Exception e) {
 //            System.out.printf("parse parameters error:%s%n, %s%n", e.getMessage(), e);
 //        }
-        new MessageClient(host, port).run();
+        MessageClient messageClient = new MessageClient(host, port);
+        messageClient.start();
+        //等待連線建立完成
+        Thread.sleep(1000);
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setAccountId(1L);
+        messageClient.send(accountInfo);
     }
 }

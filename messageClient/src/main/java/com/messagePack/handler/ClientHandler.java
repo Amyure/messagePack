@@ -1,5 +1,7 @@
 package com.messagePack.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.messagePack.model.AccountInfo;
 import com.messagePack.model.MessageInfo;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -7,11 +9,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.msgpack.MessagePack;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-public class ClientHandler extends SimpleChannelInboundHandler<MessageInfo> {
+public class ClientHandler extends SimpleChannelInboundHandler<Object> {
 
     private static final ByteBuf HEARTBEAT_SEQUENCE = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer("Heartbeat", StandardCharsets.UTF_8));
 
@@ -20,9 +23,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageInfo> {
     private int currentTime = 0;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, MessageInfo info) throws Exception
-    {
-        System.out.println("receive message:"+info.getContent());
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object info) throws Exception {
+        System.out.println("receive object:"+ new ObjectMapper().writeValueAsString(info));
     }
 
     @Override
@@ -31,18 +33,13 @@ public class ClientHandler extends SimpleChannelInboundHandler<MessageInfo> {
         // 处理I/O事件的异常
         cause.printStackTrace();
         ctx.close();
+        System.out.println("channel closed");
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception
     {
-        //发送自定义协议格式的消息
-        MessageInfo info=new MessageInfo();
-//        info.setHeader((short) 1);
-//        info.setMsgType((byte) 1);
-        info.setContent("Hello Server");
-        System.out.println("send a message："+info.getContent());
-        ctx.writeAndFlush(info);
+        System.out.println("client connected");
     }
 
     @Override

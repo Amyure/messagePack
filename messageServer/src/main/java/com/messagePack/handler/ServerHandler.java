@@ -1,6 +1,7 @@
 package com.messagePack.handler;
 
-import com.messagePack.model.MessageInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.messagePack.model.AccountInfo;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
@@ -12,17 +13,13 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)  throws Exception
     {
+        System.out.println("receive object:" + new ObjectMapper().writeValueAsString(msg));
 
-        MessageInfo in=(MessageInfo)msg;
-        System.out.println("receive message:" +in.getContent());
-
-        MessageInfo returnInfo=new MessageInfo();
-//        returnInfo.setHeader((short)0x3C3C);
-//        returnInfo.setMsgType((byte)0x01);
-        returnInfo.setContent("Hello User!");
-
-        ctx.writeAndFlush(returnInfo);
-
+        //測試回打一個
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setAccountId(2L);
+        System.out.println("send object:" + new ObjectMapper().writeValueAsString(accountInfo));
+        ctx.writeAndFlush(accountInfo);
     }
 
 
