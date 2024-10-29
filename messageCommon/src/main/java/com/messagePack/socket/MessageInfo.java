@@ -1,4 +1,4 @@
-package com.messagePack.model;
+package com.messagePack.socket;
 
 import lombok.Getter;
 import lombok.Setter;

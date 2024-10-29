@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messagePack.decode.MessagePackDecoder;
 import com.messagePack.encode.MessagePackEncoder;
 import com.messagePack.handler.ClientHandler;
-import com.messagePack.model.MessageInfo;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -15,7 +14,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.msgpack.MessagePack;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;

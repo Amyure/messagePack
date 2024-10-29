@@ -1,6 +1,6 @@
 package com.messagePack.decode;
 
-import com.messagePack.model.MessageInfo;
+import com.messagePack.socket.MessageInfo;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
