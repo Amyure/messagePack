@@ -13,9 +13,6 @@ import java.io.Serializable;
 @MessagePackBeans
 public class MessageInfo implements Serializable {
 
-    private short header;
-
-    private byte msgType;
 
     public String content;
 
