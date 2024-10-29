@@ -26,21 +26,22 @@ public class MessageServer {
     }
 
     public void run() throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(); //accept thread pool 默認核心執行緒數量 * 2
+        EventLoopGroup workerGroup = new NioEventLoopGroup(); //work thread pool
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
-                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .option(ChannelOption.SO_BACKLOG, 128) //等待連接上限
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 20000) //連線超時限制
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new IdleStateHandler(0, 0, 5, TimeUnit.SECONDS));
-                            socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024,0,2,0,2));
-                            socketChannel.pipeline().addLast(new MessagePackDecoder());
-                            socketChannel.pipeline().addLast(new LengthFieldPrepender(2));
-                            socketChannel.pipeline().addLast(new MessagePackEncoder());
+                            socketChannel.pipeline().addLast("heartBeat", new IdleStateHandler(0, 0, 5, TimeUnit.SECONDS)); //heartbeat
+                            socketChannel.pipeline().addLast("lengthFieldBasedFrameDecoder", new LengthFieldBasedFrameDecoder(1024,0,2,0,2)); //拆解數據
+                            socketChannel.pipeline().addLast("messageDecoder", new MessagePackDecoder());
+                            socketChannel.pipeline().addLast("lengthFieldPrepender", new LengthFieldPrepender(2)); //添加數據長度
+                            socketChannel.pipeline().addLast("messageEncoder", new MessagePackEncoder());
                             socketChannel.pipeline().addLast(new ServerHandler());
                         }
                     });

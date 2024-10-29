@@ -1,6 +1,8 @@
 package com.messagePack.handler;
 
-import com.messagePack.model.MessageInfo;
+import com.messagePack.model.AccountInfo;
+import com.messagePack.service.AccountInfoService;
+import com.messagePack.socket.MessageInfo;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
@@ -12,16 +14,13 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)  throws Exception
     {
-
-        MessageInfo in=(MessageInfo)msg;
-        System.out.println("receive message:" +in.getContent());
-
-        MessageInfo returnInfo=new MessageInfo();
-//        returnInfo.setHeader((short)0x3C3C);
-//        returnInfo.setMsgType((byte)0x01);
-        returnInfo.setContent("Hello User!");
-
-        ctx.writeAndFlush(returnInfo);
+        MessageInfo in = (MessageInfo) msg;
+        System.out.println("receive message:" + msg.toString());
+        Object returnObject = switch (in.getType()) {
+            case MessageInfo.ACCOUNT_INFO_TYPE -> new AccountInfoService().getInfo(in);
+            default -> "";
+        };
+        ctx.writeAndFlush(new MessageInfo(returnObject));
 
     }
 
