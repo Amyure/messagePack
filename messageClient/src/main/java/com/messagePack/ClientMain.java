@@ -17,9 +17,15 @@ public class ClientMain {
         MessageClient messageClient = new MessageClient(host, port);
         messageClient.start();
         //等待連線建立完成
-        Thread.sleep(1000);
+        Thread.sleep(   20000);
         AccountInfo accountInfo = new AccountInfo();
         accountInfo.setAccountId(1L);
         messageClient.send(accountInfo);
+
+        // 添加一个钩子以便在程序结束时关闭客户端
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("main close");
+            messageClient.shutdown();
+        }));
     }
 }

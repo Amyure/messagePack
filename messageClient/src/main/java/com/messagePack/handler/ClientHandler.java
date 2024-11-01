@@ -1,15 +1,18 @@
 package com.messagePack.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.messagePack.socket.MessageClient;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoop;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class ClientHandler extends SimpleChannelInboundHandler<Object> {
 
@@ -18,6 +21,12 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
     private static final int TRY_TIMES = 3;
 
     private int currentTime = 0;
+
+    private MessageClient messageClient;
+
+    public ClientHandler(MessageClient messageClient) {
+        this.messageClient = messageClient;
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object info) throws Exception {
@@ -52,5 +61,12 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
                 }
             }
         }
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        // 斷線時進行重新連接
+        super.channelInactive(ctx);
+        messageClient.connect();
     }
 }
